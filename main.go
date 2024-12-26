@@ -1,9 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"DnspodCut/utils"
 )
 
 func main() {
-	fmt.Println("Hello World")
+	//internal.LoadYaml()
+
+	host := "124.113.13.12" // 你可以替换为任何活动的 IP 地址
+
+	utils.Ping(host)
+
 }
