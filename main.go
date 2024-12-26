@@ -1,14 +1,34 @@
 package main
 
 import (
-	"DnspodCut/utils"
+	"DnspodCut/internal"
+	"log"
+	"time"
+
+	"github.com/robfig/cron"
 )
 
 func main() {
-	//internal.LoadYaml()
+	log.Println("项目开始...")
 
-	host := "124.113.13.12" // 你可以替换为任何活动的 IP 地址
+	internal.LoadYaml()
 
-	utils.Ping(host)
+	c := cron.New()
 
+	err := c.AddFunc("* * * * *", func() {
+		log.Println("定时任务执行")
+	})
+	if err != nil {
+		return
+	}
+
+	c.Start()
+
+	t1 := time.NewTimer(time.Second * 10)
+	for {
+		select {
+		case <-t1.C:
+			t1.Reset(time.Second * 10)
+		}
+	}
 }

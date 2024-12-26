@@ -1,15 +1,15 @@
 package internal
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
+	"log"
 	"os"
 )
 
 type Config struct {
 	SecretId  string `yaml:"secretId"`
 	SecretKey string `yaml:"secretKey"`
-	Dns       Dns    `yaml:"dns"`
+	Dns       []Dns  `yaml:"dns"`
 }
 
 type Dns struct {
@@ -21,27 +21,28 @@ type Dns struct {
 	RecordLineId string `yaml:"recordLineId"`
 }
 
-func LoadYaml() {
+func LoadYaml() (Config, error) {
 	dataBytes, err := os.ReadFile("config.yaml")
-	if err != nil {
-		fmt.Println("读取文件失败：", err)
-		return
-	}
-	fmt.Println("yaml 文件的内容: \n", string(dataBytes))
 	config := Config{}
+	if err != nil {
+		log.Println("读取文件失败：", err)
+		return config, err
+	}
+
 	err = yaml.Unmarshal(dataBytes, &config)
 	if err != nil {
-		fmt.Println("解析 yaml 文件失败：", err)
-		return
+		log.Println("解析 yaml 文件失败：", err)
+		return config, err
 	}
-	fmt.Printf("config → %+v\n", config) // config → {Mysql:{Url:127.0.0.1 Port:3306} Redis:{Host:127.0.0.1 Port:6379}}
+	log.Printf("config → %+v\n", config)
 
 	mp := make(map[string]any, 2)
 	err = yaml.Unmarshal(dataBytes, mp)
 	if err != nil {
-		fmt.Println("解析 yaml 文件失败：", err)
-		return
+		log.Println("解析 yaml 文件失败：", err)
+		return config, err
 	}
-	fmt.Printf("map → %+v", config) // config → {Mysql:{Url:127.0.0.1 Port:3306} Redis:{Host:127.0.0.1 Port:6379}}
 
+	log.Printf("配置读取成功")
+	return config, nil
 }

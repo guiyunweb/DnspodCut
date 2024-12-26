@@ -1,9 +1,15 @@
 secretId: 1
 secretKey: 2
 dns:
-  domain: guiyunweb.com
-  recordType: A
-  recordLine: API调用
-  value: 219.144.85.122
-  subdomain: abcd
-  recordLineId: 0
+  - domain: guiyunweb.com
+    recordType: A
+    recordLine: API调用
+    value: 219.144.85.122
+    subdomain: abcd
+    recordLineId: 0
+  - domain: guiyunweb.com
+    recordType: A
+    recordLine: API调用
+    value: 219.144.85.122
+    subdomain: abcd
+    recordLineId: 0
