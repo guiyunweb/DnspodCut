@@ -1,13 +1,12 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 	"strings"
 )
 
-func Ping(host string) {
+func Ping(host string) bool {
 
 	// 执行 ping 命令
 	cmd := exec.Command("ping", "-c", "4", host) // 在 macOS 或 Linux 上使用 "-c" 参数，在 Windows 上使用 "-n" 参数
@@ -30,10 +29,10 @@ func Ping(host string) {
 	}
 
 	if pingValue != "" {
-		log.Printf("Ping to %s is successful. Ping value: %s\n", host, pingValue)
-		fmt.Printf("Ping to %s is successful. Ping value: %s\n", host, pingValue)
+		log.Printf("Ping成功 %s. Ping值为: %s\n", host, pingValue)
+		return true
 	} else {
-		log.Printf("Ping to %s failed\n", host)
-		fmt.Printf("Ping to %s failed\n", host)
+		log.Printf("Ping成功 %s .\n", host)
+		return false
 	}
 }

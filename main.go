@@ -11,19 +11,20 @@ import (
 func main() {
 	log.Println("项目开始...")
 
-	internal.LoadYaml()
-
-	c := cron.New()
-
-	err := c.AddFunc("* * * * *", func() {
-		log.Println("定时任务执行")
-	})
+	// 读取配置文件
+	config, err := internal.LoadYaml()
 	if err != nil {
-		return
+		log.Fatal("配置文件读取错误，程序停止......", err)
 	}
 
-	c.Start()
+	// 执行定时任务
+	c := cron.New()
+	err = c.AddFunc("0 * * * *", func() {
+		internal.MonitoringAndUpdateDNS(config)
+	})
 
+	//开始定时任务
+	c.Start()
 	t1 := time.NewTimer(time.Second * 10)
 	for {
 		select {
