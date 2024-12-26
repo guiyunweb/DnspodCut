@@ -28,6 +28,7 @@ func FindDns(config structs.Config, dns structs.Dns) ([]structs.RecordList, erro
 
 	request.Domain = common.StringPtr("guiyunweb.com")
 	request.Subdomain = common.StringPtr(dns.SubDomain)
+	request.RecordType = common.StringPtr(dns.RecordType)
 
 	// 返回的resp是一个DescribeRecordListResponse的实例，与请求对象对应
 	response, err := client.DescribeRecordList(request)
@@ -45,7 +46,7 @@ func FindDns(config structs.Config, dns structs.Dns) ([]structs.RecordList, erro
 	if err != nil {
 		log.Printf("转换错误 : %s", err)
 	}
-	return data.RecordList, nil
+	return data.Response.RecordList, nil
 }
 
 func UpdateDns(config structs.Config, dns structs.Dns, ip structs.RecordList, status string) {
@@ -83,11 +84,11 @@ func UpdateDns(config structs.Config, dns structs.Dns, ip structs.RecordList, st
 	fmt.Printf("%s", response.ToJsonString())
 }
 
-func jsonToStruct(jsonStr string) (structs.ResponseSelectDns, error) {
-	var person structs.ResponseSelectDns
+func jsonToStruct(jsonStr string) (structs.Response, error) {
+	var person structs.Response
 	err := json.Unmarshal([]byte(jsonStr), &person)
 	if err != nil {
-		return structs.ResponseSelectDns{}, err
+		return structs.Response{}, err
 	}
 	return person, nil
 }

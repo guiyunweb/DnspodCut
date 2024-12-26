@@ -8,10 +8,7 @@ type Config struct {
 }
 
 type Dns struct {
-	Domain       string   `yaml:"domain"`
-	RecordType   string   `yaml:"recordType"`
-	RecordLine   string   `yaml:"recordLine"`
-	Value        []string `yaml:"value"`
-	SubDomain    string   `yaml:"subdomain"`
-	RecordLineId string   `yaml:"recordLineId"`
+	Domain     string `yaml:"domain"`
+	RecordType string `yaml:"recordType"`
+	SubDomain  string `yaml:"subdomain"`
 }

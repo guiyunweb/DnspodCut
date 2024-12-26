@@ -4,6 +4,7 @@ import (
 	"DnspodCut/structs"
 	"DnspodCut/utils"
 	"log"
+	"strconv"
 )
 
 var m = make(map[string]int)
@@ -25,12 +26,12 @@ func MonitoringAndUpdateDNS(config structs.Config) {
 		for _, record := range data {
 			isPing := utils.Ping(record.Value)
 			if !isPing {
-				if value, exists := m[record.Value]; exists {
+				if value, exists := m[strconv.FormatUint(record.RecordId, 10)]; exists {
 					log.Printf("'%s' 不通，错误数值为 %d\n", record.Value, value)
-					m[record.Value] = value + 1
+					m[strconv.FormatUint(record.RecordId, 10)] = value + 1
 				} else {
 					log.Printf("'%s' 不通，错误数值为 %d\n", record.Value, value)
-					m[record.Value] = 1
+					m[strconv.FormatUint(record.RecordId, 10)] = 1
 				}
 
 			} else {
@@ -43,7 +44,7 @@ func MonitoringAndUpdateDNS(config structs.Config) {
 				}
 			}
 
-			if m[record.Value] > config.ErrorNum {
+			if m[strconv.FormatUint(record.RecordId, 10)] > config.ErrorNum {
 				utils.UpdateDns(config, item, record, "DISABLE")
 				log.Printf("'%s' 请求多次异常，将解析修改为暂停\n", record.Value)
 			}

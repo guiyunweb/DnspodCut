@@ -1,8 +1,11 @@
 package structs
 
+type Response struct {
+	Response ResponseSelectDns `json:"Response"`
+}
+
 type ResponseSelectDns struct {
 	RecordList []RecordList `json:"RecordList"`
-	Age        int          `json:"age"`
 }
 
 type RecordList struct {
