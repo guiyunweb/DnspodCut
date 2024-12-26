@@ -1,30 +1,15 @@
 package internal
 
 import (
+	"DnspodCut/structs"
 	"gopkg.in/yaml.v2"
 	"log"
 	"os"
 )
 
-type Config struct {
-	SecretId  string `yaml:"secretId"`
-	SecretKey string `yaml:"secretKey"`
-	ErrorNum  int    `yaml:"errorNum"`
-	Dns       []Dns  `yaml:"dns"`
-}
-
-type Dns struct {
-	Domain       string   `yaml:"domain"`
-	RecordType   string   `yaml:"recordType"`
-	RecordLine   string   `yaml:"recordLine"`
-	Value        []string `yaml:"value"`
-	SubDomain    string   `yaml:"subdomain"`
-	RecordLineId string   `yaml:"recordLineId"`
-}
-
-func LoadYaml() (Config, error) {
+func LoadYaml() (structs.Config, error) {
 	dataBytes, err := os.ReadFile("config.yaml")
-	config := Config{}
+	config := structs.Config{}
 	if err != nil {
 		log.Println("读取文件失败：", err)
 		return config, err

@@ -1,47 +1,51 @@
 package internal
 
 import (
+	"DnspodCut/structs"
 	"DnspodCut/utils"
 	"log"
 )
 
 var m = make(map[string]int)
 
-func MonitoringAndUpdateDNS(config Config) {
+func MonitoringAndUpdateDNS(config structs.Config) {
 	dns := config.Dns
 
 	for _, item := range dns {
 
 		domain := item.SubDomain + "." + item.Domain
+
 		log.Printf("\n\n================= %s =================", domain)
 
-		//查看DNS是否成功
-		isPing := utils.Ping(domain)
-
-		if !isPing {
-			// 判断键是否存在
-			if value, exists := m[domain]; exists {
-				log.Printf("'%s' 不通，错误数值为 %d\n", domain, value)
-				m[domain] = value + 1
-			} else {
-				log.Printf("'%s' 不通，错误数值为 %d\n", domain, value)
-				m[domain] = 1
-			}
-			if m[domain] < 0 {
-				log.Printf("'%s' 值切换中......\n", domain)
-			}
-		} else {
-			m[domain] = 0
+		data, err := utils.FindDns(config, item)
+		if err != nil {
+			log.Printf("请求DNS列表失败 \n")
 		}
 
-		if m[domain] > config.ErrorNum {
-			log.Printf("'%s'错误数 %d已超过,现为%d.开始切换  \n", domain, config.ErrorNum, m[domain])
-			for _, value := range item.Value {
-				isValue := utils.Ping(value)
-				if isValue {
-					utils.UpdateDns(config, item, domain)
-					m[domain] = -30
+		for _, record := range data {
+			isPing := utils.Ping(record.Value)
+			if !isPing {
+				if value, exists := m[record.Value]; exists {
+					log.Printf("'%s' 不通，错误数值为 %d\n", record.Value, value)
+					m[record.Value] = value + 1
+				} else {
+					log.Printf("'%s' 不通，错误数值为 %d\n", record.Value, value)
+					m[record.Value] = 1
 				}
+
+			} else {
+				if record.Status == "DISABLE" {
+					utils.UpdateDns(config, item, record, "ENABLE")
+					log.Printf("'%s' 恢复正常，将解析修改为开启\n", record.Value)
+				} else {
+					log.Printf("'%s' 正常......\n", record.Value)
+
+				}
+			}
+
+			if m[record.Value] > config.ErrorNum {
+				utils.UpdateDns(config, item, record, "DISABLE")
+				log.Printf("'%s' 请求多次异常，将解析修改为暂停\n", record.Value)
 			}
 		}
 

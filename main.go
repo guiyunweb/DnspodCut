@@ -20,6 +20,7 @@ func main() {
 	// 执行定时任务
 	c := cron.New()
 	err = c.AddFunc("0 * * * *", func() {
+		log.Println("定时任务开始")
 		internal.MonitoringAndUpdateDNS(config)
 	})
 
